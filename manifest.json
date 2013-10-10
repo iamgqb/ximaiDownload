@@ -1,0 +1,33 @@
+{
+    "manifest_version": 2,
+
+    "name": "xiami-music-download",
+    "description": "A extension download music form xiami.Your must listening once to get the url.",
+    "version": "1.0",
+
+    "permissions": [
+        "http://*.xiami.com/*",
+        "tabs",
+        "webNavigation",
+        "webRequest"
+    ],
+
+    "page_action": {
+        "default_icon": {
+            "19": "images/xiami19.png"
+        },
+        "default_title": "Xiami Music"
+    },
+
+    "background": {
+        "persisten": false,
+        "scripts": ["background.js"]
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["http://www.xiami.com/song/play*"],
+            "js": ["content.js"]
+        }
+    ]
+}
