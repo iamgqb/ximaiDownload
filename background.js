@@ -6,7 +6,7 @@
 
 var tabID;
 
-chrome.webNavigation.onCommitted.addListener(function(details){
+chrome.webNavigation.onDOMContentLoaded.addListener(function(details){
     tabID = details.tabId;
     chrome.pageAction.show(tabID);
     bind();
@@ -16,8 +16,12 @@ chrome.webNavigation.onCommitted.addListener(function(details){
 
 function bind(){
     chrome.webRequest.onResponseStarted.addListener(function(request){
-        var url = request.url;
-        chrome.tabs.sendMessage(tabID, url);
-    },{urls:["http://m1.file.xiami.com/*.mp3", "http://img.xiami.com/*.lrc"]});
+        var message = {url: request.url, status: request.statusCode};
+        sendMessage(tabID, message);
+    },{urls:["http://m1.file.xiami.com/*.mp3", "http://img.xiami.com/*.lrc", "http://www.xiami.com/song/lyrictxt/id/*"]});
     // 目测都是mp3格式
+}
+
+function sendMessage(tabID, message){
+    chrome.tabs.sendMessage(tabID, message);
 }

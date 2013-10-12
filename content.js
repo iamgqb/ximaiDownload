@@ -36,22 +36,54 @@
         lrcButton.style.display = 'none';
     };
 
-    chrome.runtime.onMessage.addListener(function(URL, sender){
+    chrome.runtime.onMessage.addListener(function(message, sender){
+        var suffix = message.url.substr(-3, 3);
+        console.log(message.url)
+        if (message.status == 200){
+            switch (suffix) {
+                case 'lrc':
+                    lrcButton.onclick = null;
+                    lrcButton.href = message.url;
+                    lrcButton.download = getTitle()+'.lrc';
+                    break;
 
-        var suffix = URL.substr(-3, 3);
+                case 'mp3':
+                    musicButton.onclick = null;
+                    musicButton.href = message.url;
+                    musicButton.download = getTitle()+'.mp3';
+                    //虾米不知道做了什么，链接后加了查询，后缀名只好自己加了
+                    break;
 
-        switch (suffix) {
-            case 'lrc':
-                lrcButton.href = URL;
-                lrcButton.download = getTitle()+'.lrc';
-                break;
+                default :
+                    //静态歌词，后三位为数字
+                    lrcButton.onclick = null;
+                    lrcButton.href = message.url;
+                    lrcButton.download = getTitle()+'.lrc';
+                    break;
+            }
+        } else {
+            //请求失败
+            switch (suffix) {
+                case 'lrc':
+                    lrcButton.href = 'javascript:;';
+                    lrcButton.download = '';
+                    lrcButton.onclick = function(){alert('查询歌词失败')};
+                    break;
 
-            case 'mp3':
-                musicButton.href = URL;
-                musicButton.download = getTitle()+'.mp3';
-                //虾米不知道做了什么，链接后加了查询，后缀名只好自己加了
-                break;
+                case 'mp3':
+                    musicButton.href = 'javascript:;';
+                    musicButton.download = '';
+                    musicButton.onclick = function(){alert('查询歌曲失败')};
+                    break;
+
+                default :
+                    lrcButton.href = 'javascript:;';
+                    lrcButton.download = '';
+                    lrcButton.onclick = function(){alert('查询歌词失败')};
+                    break;
+            }
         }
+
     });
 
     function getTitle(){
